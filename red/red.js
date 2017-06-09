@@ -19,6 +19,7 @@ var path = require('path');
 
 var runtime = require("./runtime");
 var api = require("./api");
+var htmlToText = require('html-to-text');
 
 process.env.NODE_RED_HOME = process.env.NODE_RED_HOME || path.resolve(__dirname+"/..");
 
