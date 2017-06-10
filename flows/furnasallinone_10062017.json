@@ -1,0 +1,971 @@
+[
+    {
+        "id": "95d6ae31.4f35a",
+        "type": "tab",
+        "label": "Entrypoint Flow"
+    },
+    {
+        "id": "a891aa32.dff9e",
+        "type": "tab",
+        "label": "Text Flow 1"
+    },
+    {
+        "id": "6a198863.4282d8",
+        "type": "tab",
+        "label": "Text Flow 2"
+    },
+    {
+        "id": "ba8df3a2.f24d28",
+        "type": "tab",
+        "label": "Voice Flow 1"
+    },
+    {
+        "id": "dcc88864.42639",
+        "type": "tab",
+        "label": "Voice Flow 2"
+    },
+    {
+        "id": "191e0ffe.b69308",
+        "type": "tab",
+        "label": "Action Discovery Flow"
+    },
+    {
+        "id": "90367877.8b4cc8",
+        "type": "telegram bot",
+        "z": "",
+        "botname": "furnaschatbot",
+        "usernames": "",
+        "chatids": ""
+    },
+    {
+        "id": "b115465a.42ce78",
+        "type": "telegram bot",
+        "z": 0,
+        "botname": "botman",
+        "usernames": "",
+        "chatids": ""
+    },
+    {
+        "id": "13d2ea2.186e696",
+        "type": "telegram bot",
+        "z": 0,
+        "botname": "botman",
+        "usernames": "",
+        "chatids": ""
+    },
+    {
+        "id": "fa683b8e.4cbb48",
+        "type": "telegram receiver",
+        "z": "95d6ae31.4f35a",
+        "name": "",
+        "bot": "90367877.8b4cc8",
+        "saveDataDir": "",
+        "x": 203.66665649414062,
+        "y": 67.66666412353516,
+        "wires": [
+            [
+                "d0288992.67edb8"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "97878b21.204918",
+        "type": "link out",
+        "z": "95d6ae31.4f35a",
+        "name": "HTTPRequestOutput",
+        "links": [
+            "7af5fa42.0ca6a4"
+        ],
+        "x": 706.6906127929688,
+        "y": 292.2063293457031,
+        "wires": []
+    },
+    {
+        "id": "faf4ccbb.e0718",
+        "type": "function",
+        "z": "95d6ae31.4f35a",
+        "name": "Set Voice Context",
+        "func": "msg.additional_context = {\n    telegram: {\n    user: msg.originalMessage.first_name,\n    type: msg.payload.type,\n    chat_id: msg.payload.chatId,\n    msg_payload_original: msg.payload,\n    dm: false\n}}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 517.6111526489258,
+        "y": 291.8888626098633,
+        "wires": [
+            [
+                "97878b21.204918"
+            ]
+        ]
+    },
+    {
+        "id": "675d33fb.f65edc",
+        "type": "switch",
+        "z": "95d6ae31.4f35a",
+        "name": "",
+        "property": "payload.type",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "message",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "voice",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "outputs": 2,
+        "x": 236.8333740234375,
+        "y": 241.5555419921875,
+        "wires": [
+            [
+                "9a18805b.3a0cd"
+            ],
+            [
+                "faf4ccbb.e0718"
+            ]
+        ]
+    },
+    {
+        "id": "b6fba09b.fa194",
+        "type": "link out",
+        "z": "95d6ae31.4f35a",
+        "name": "",
+        "links": [
+            "57d2b188.c5555",
+            "b85e6e18.906a38"
+        ],
+        "x": 695.6825561523438,
+        "y": 194.6348876953125,
+        "wires": []
+    },
+    {
+        "id": "9a18805b.3a0cd",
+        "type": "function",
+        "z": "95d6ae31.4f35a",
+        "name": "Set Text Context",
+        "func": "msg.telegramMsg = {};\nmsg.telegramMsg.type = msg.payload.type;\nmsg.telegramMsg.chat_id = msg.payload.chatId;\nmsg.telegramMsg.msg_payload_original = msg.payload;\nmsg.telegramMsg.username = msg.originalMessage.from.first_name;\nmsg.payload = msg.payload.content;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 505.5556182861328,
+        "y": 194.77777099609375,
+        "wires": [
+            [
+                "b6fba09b.fa194"
+            ]
+        ]
+    },
+    {
+        "id": "d0288992.67edb8",
+        "type": "link out",
+        "z": "95d6ae31.4f35a",
+        "name": "Save Generic Context Output",
+        "links": [
+            "da00351e.86e908"
+        ],
+        "x": 686.1666564941406,
+        "y": 63.666664123535156,
+        "wires": []
+    },
+    {
+        "id": "da00351e.86e908",
+        "type": "link in",
+        "z": "95d6ae31.4f35a",
+        "name": "Switch Input",
+        "links": [
+            "d0288992.67edb8"
+        ],
+        "x": 106.16668701171875,
+        "y": 241.66665649414062,
+        "wires": [
+            [
+                "675d33fb.f65edc"
+            ]
+        ]
+    },
+    {
+        "id": "82d5c18.4d8114",
+        "type": "function",
+        "z": "95d6ae31.4f35a",
+        "name": "Prepare Msg To send To Telegram",
+        "func": "msg.payload = {chatId : msg.telegramMsg.chat_id,\ntype : \"message\",\ncontent : msg.queryResult};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 669.9999389648438,
+        "y": 1194.2857666015625,
+        "wires": [
+            [
+                "8dfbc45e.5c4518",
+                "1f593ac7.ab97a5"
+            ]
+        ]
+    },
+    {
+        "id": "8dfbc45e.5c4518",
+        "type": "telegram sender",
+        "z": "95d6ae31.4f35a",
+        "name": "",
+        "bot": "90367877.8b4cc8",
+        "x": 1028.5714111328125,
+        "y": 1195.7144165039062,
+        "wires": [
+            [
+                "876f961c.8411a8"
+            ]
+        ]
+    },
+    {
+        "id": "876f961c.8411a8",
+        "type": "debug",
+        "z": "95d6ae31.4f35a",
+        "name": "",
+        "active": true,
+        "console": "true",
+        "complete": "true",
+        "x": 989.28564453125,
+        "y": 1300.7141723632812,
+        "wires": []
+    },
+    {
+        "id": "b094df2c.d0b71",
+        "type": "HtmltotextWatsonConversation",
+        "z": "95d6ae31.4f35a",
+        "name": "",
+        "topic": "",
+        "x": 269.9996643066406,
+        "y": 1194.2858276367188,
+        "wires": [
+            [
+                "82d5c18.4d8114"
+            ]
+        ]
+    },
+    {
+        "id": "1f593ac7.ab97a5",
+        "type": "debug",
+        "z": "95d6ae31.4f35a",
+        "name": "",
+        "active": true,
+        "console": "true",
+        "complete": "true",
+        "x": 776.428466796875,
+        "y": 1317.8570556640625,
+        "wires": []
+    },
+    {
+        "id": "7634c986.bf7d58",
+        "type": "link in",
+        "z": "95d6ae31.4f35a",
+        "name": "Html To Text WConversation Input",
+        "links": [
+            "6c956160.d160f",
+            "f487aead.26d238",
+            "93b9de68.ca4ab",
+            "6a42642d.47c574"
+        ],
+        "x": 73.57144165039062,
+        "y": 1194.6428833007812,
+        "wires": [
+            [
+                "b094df2c.d0b71"
+            ]
+        ]
+    },
+    {
+        "id": "61cca529.ee73c4",
+        "type": "telegram sender",
+        "z": "a891aa32.dff9e",
+        "name": "",
+        "bot": "90367877.8b4cc8",
+        "x": 1149.3812255859375,
+        "y": 217.71431732177734,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "4fd7f98e.97a9d",
+        "type": "watson-conversation-v1",
+        "z": "a891aa32.dff9e",
+        "name": "Conersation Action Discovery Request",
+        "workspaceid": "6a80f23f-2816-4df3-b857-ec53b3bdde40",
+        "multiuser": false,
+        "context": true,
+        "default-endpoint": true,
+        "service-endpoint": "https://gateway.watsonplatform.net/conversation/api",
+        "x": 327.9761962890625,
+        "y": 108.57149505615234,
+        "wires": [
+            [
+                "6b0f178f.fcbf68"
+            ]
+        ]
+    },
+    {
+        "id": "b85e6e18.906a38",
+        "type": "link in",
+        "z": "a891aa32.dff9e",
+        "name": "TelegramHtmlToTextConvertion",
+        "links": [
+            "b6fba09b.fa194"
+        ],
+        "x": 84.9761962890625,
+        "y": 109.4763412475586,
+        "wires": [
+            [
+                "4fd7f98e.97a9d"
+            ]
+        ]
+    },
+    {
+        "id": "2e6ba32f.59fb34",
+        "type": "function",
+        "z": "a891aa32.dff9e",
+        "name": "Prepare Message to Switch Input",
+        "func": "\nif(msg.payload.output.text[0]!=null){\n    console.log(msg.payload.output.text[0]);\n}\nmsg.payload = {chatId : msg.telegramMsg.chat_id,\ntype : \"message\",\ncontent : msg.payload.output.text[0]?msg.payload.output.text[0]:null};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 280.8333435058594,
+        "y": 228.09529876708984,
+        "wires": [
+            [
+                "3fb79591.7f01d2"
+            ]
+        ]
+    },
+    {
+        "id": "6b0f178f.fcbf68",
+        "type": "HtmltotextWatsonConversation",
+        "z": "a891aa32.dff9e",
+        "name": "",
+        "topic": "",
+        "x": 720.690673828125,
+        "y": 110.42879486083984,
+        "wires": [
+            [
+                "ec6a985e.53825"
+            ]
+        ]
+    },
+    {
+        "id": "3fb79591.7f01d2",
+        "type": "switch",
+        "z": "a891aa32.dff9e",
+        "name": "Switch Test payload.content",
+        "property": "payload.content",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nnull"
+            },
+            {
+                "t": "null"
+            }
+        ],
+        "checkall": "true",
+        "outputs": 2,
+        "x": 618.571533203125,
+        "y": 224.6429672241211,
+        "wires": [
+            [
+                "61cca529.ee73c4"
+            ],
+            [
+                "3c4dc478.ebd454"
+            ]
+        ]
+    },
+    {
+        "id": "ec6a985e.53825",
+        "type": "link out",
+        "z": "a891aa32.dff9e",
+        "name": "HtmlToTextWatsonOutput",
+        "links": [
+            "4e6e5250.49ed24",
+            "23fb12c7.57c30e",
+            "85819f9.ae93be"
+        ],
+        "x": 1018.5714721679688,
+        "y": 108.5714340209961,
+        "wires": []
+    },
+    {
+        "id": "52c34640.aebb1",
+        "type": "link in",
+        "z": "a891aa32.dff9e",
+        "name": "PrepareMessageToSendToSwiftandTelagram",
+        "links": [
+            "3bce4879.01ee9",
+            "e8ab9c19.c998c8",
+            "43018374.45b834",
+            "4ada2cef.c1f2f4",
+            "2818e5e0.f8498a",
+            "3de3693b.7206ee"
+        ],
+        "x": 88.57144165039062,
+        "y": 226.7857894897461,
+        "wires": [
+            [
+                "2e6ba32f.59fb34"
+            ]
+        ]
+    },
+    {
+        "id": "3c4dc478.ebd454",
+        "type": "link out",
+        "z": "a891aa32.dff9e",
+        "name": "Switch Test payload.content Input",
+        "links": [
+            "41079136.03c6a8",
+            "bc233d0b.edafa",
+            "c5b0582f.a6e68"
+        ],
+        "x": 959.9998779296875,
+        "y": 232.8573226928711,
+        "wires": []
+    },
+    {
+        "id": "5cad58b2.fc0548",
+        "type": "switch",
+        "z": "6a198863.4282d8",
+        "name": "Discovery Switch Principal",
+        "property": "payload.output.action",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "null"
+            },
+            {
+                "t": "nnull"
+            },
+            {
+                "t": "eq",
+                "v": "discovery",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "outputs": 3,
+        "x": 222.85714721679688,
+        "y": 140,
+        "wires": [
+            [
+                "43018374.45b834"
+            ],
+            [
+                "16510570.4edcfb"
+            ],
+            [
+                "16510570.4edcfb"
+            ]
+        ]
+    },
+    {
+        "id": "16510570.4edcfb",
+        "type": "CustomDiscoveryQuery",
+        "z": "6a198863.4282d8",
+        "query": "agendar",
+        "name": "",
+        "x": 742.8097229003906,
+        "y": 143.2381591796875,
+        "wires": [
+            [
+                "a981f79a.979cc"
+            ]
+        ]
+    },
+    {
+        "id": "f1442552.4fd9a8",
+        "type": "watson-conversation-v1",
+        "z": "6a198863.4282d8",
+        "name": "Conversation Action Discovery Response",
+        "workspaceid": "6a80f23f-2816-4df3-b857-ec53b3bdde40",
+        "multiuser": false,
+        "context": true,
+        "default-endpoint": true,
+        "service-endpoint": "https://gateway.watsonplatform.net/conversation/api",
+        "x": 1006.3095397949219,
+        "y": 415.4288024902344,
+        "wires": [
+            [
+                "93b9de68.ca4ab"
+            ]
+        ]
+    },
+    {
+        "id": "44266a21.dabe64",
+        "type": "switch",
+        "z": "6a198863.4282d8",
+        "name": "Switch to test query result",
+        "property": "queryResult",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "null"
+            },
+            {
+                "t": "nnull"
+            }
+        ],
+        "checkall": "true",
+        "outputs": 2,
+        "x": 232.024169921875,
+        "y": 405.7857971191406,
+        "wires": [
+            [],
+            [
+                "42635679.bdfde",
+                "f90ea44e.be6c6"
+            ]
+        ]
+    },
+    {
+        "id": "a981f79a.979cc",
+        "type": "switch",
+        "z": "6a198863.4282d8",
+        "name": "Switch payload.content ",
+        "property": "payload.content",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nnull"
+            },
+            {
+                "t": "null"
+            }
+        ],
+        "checkall": "true",
+        "outputs": 2,
+        "x": 1027.0241394042969,
+        "y": 143.28564453125,
+        "wires": [
+            [
+                "4ada2cef.c1f2f4"
+            ],
+            [
+                "f89a23b4.26c3a"
+            ]
+        ]
+    },
+    {
+        "id": "75be3ec4.b86fb",
+        "type": "debug",
+        "z": "6a198863.4282d8",
+        "name": "",
+        "active": true,
+        "console": "true",
+        "complete": "true",
+        "x": 747.7382507324219,
+        "y": 502.5715637207031,
+        "wires": []
+    },
+    {
+        "id": "f90ea44e.be6c6",
+        "type": "debug",
+        "z": "6a198863.4282d8",
+        "name": "",
+        "active": true,
+        "console": "true",
+        "complete": "true",
+        "x": 323.452392578125,
+        "y": 506.8572082519531,
+        "wires": []
+    },
+    {
+        "id": "23fb12c7.57c30e",
+        "type": "link in",
+        "z": "6a198863.4282d8",
+        "name": "DiscoverySwitchPrincipalInput",
+        "links": [
+            "ec6a985e.53825"
+        ],
+        "x": 48.452362060546875,
+        "y": 140.78564453125,
+        "wires": [
+            [
+                "5cad58b2.fc0548"
+            ]
+        ]
+    },
+    {
+        "id": "42635679.bdfde",
+        "type": "function",
+        "z": "6a198863.4282d8",
+        "name": "Prepare msg To be back to Conversation",
+        "func": "var params = {};\nparams[\"conext\"] = {\n    \"gerenciar_senha_notes\":msg.queryResult\n};\n\nmsg[\"params\"] = params;\nmsg.payload = \"200\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 590.5953063964844,
+        "y": 414.3572082519531,
+        "wires": [
+            [
+                "f1442552.4fd9a8",
+                "75be3ec4.b86fb"
+            ]
+        ]
+    },
+    {
+        "id": "43018374.45b834",
+        "type": "link out",
+        "z": "6a198863.4282d8",
+        "name": "DiscoverySwitchPrincipalOutput - payload.output.action==null",
+        "links": [
+            "52c34640.aebb1"
+        ],
+        "x": 439.1666259765625,
+        "y": 102.571533203125,
+        "wires": []
+    },
+    {
+        "id": "4ada2cef.c1f2f4",
+        "type": "link out",
+        "z": "6a198863.4282d8",
+        "name": "Switch payload.content is not null output",
+        "links": [
+            "52c34640.aebb1"
+        ],
+        "x": 1254.8810729980469,
+        "y": 114,
+        "wires": []
+    },
+    {
+        "id": "bc233d0b.edafa",
+        "type": "link in",
+        "z": "6a198863.4282d8",
+        "name": "Custom Discovery Query Input",
+        "links": [
+            "3c4dc478.ebd454"
+        ],
+        "x": 523.4526062011719,
+        "y": 100.785888671875,
+        "wires": [
+            [
+                "16510570.4edcfb"
+            ]
+        ]
+    },
+    {
+        "id": "f89a23b4.26c3a",
+        "type": "link out",
+        "z": "6a198863.4282d8",
+        "name": "Switch payload.content is null Output",
+        "links": [
+            "b43ef192.d41828"
+        ],
+        "x": 1257.7381286621094,
+        "y": 164.00006103515625,
+        "wires": []
+    },
+    {
+        "id": "b43ef192.d41828",
+        "type": "link in",
+        "z": "6a198863.4282d8",
+        "name": "Switch to test query result Input",
+        "links": [
+            "f89a23b4.26c3a"
+        ],
+        "x": 54.880950927734375,
+        "y": 407.9286804199219,
+        "wires": [
+            [
+                "44266a21.dabe64"
+            ]
+        ]
+    },
+    {
+        "id": "93b9de68.ca4ab",
+        "type": "link out",
+        "z": "6a198863.4282d8",
+        "name": "Conversation Action Discovery Output",
+        "links": [
+            "7634c986.bf7d58"
+        ],
+        "x": 1203.4522399902344,
+        "y": 419.7143249511719,
+        "wires": []
+    },
+    {
+        "id": "a039a305.0604e",
+        "type": "watson-speech-to-text",
+        "z": "ba8df3a2.f24d28",
+        "name": "speechToTextBot",
+        "continuous": true,
+        "speakerlabels": false,
+        "lang": "pt-BR",
+        "langhidden": "pt-BR",
+        "langcustom": "NoCustomisationSetting",
+        "langcustomhidden": "",
+        "band": "BroadbandModel",
+        "bandhidden": "BroadbandModel",
+        "password": "",
+        "x": 828.571533203125,
+        "y": 186.3967990875244,
+        "wires": [
+            [
+                "a87123f.b09f3e"
+            ]
+        ]
+    },
+    {
+        "id": "c21f877.7e20bf8",
+        "type": "http request",
+        "z": "ba8df3a2.f24d28",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "url": "https://api.telegram.org/bot338207846:AAHfasUX_8D4LL0IfXgX3_wFEgJZqkQcDpM/getFile?file_id={{url}}",
+        "tls": "",
+        "x": 354.1270980834961,
+        "y": 184.28570556640625,
+        "wires": [
+            [
+                "67ce5778.03d81"
+            ]
+        ]
+    },
+    {
+        "id": "e8e06327.a64c18",
+        "type": "function",
+        "z": "ba8df3a2.f24d28",
+        "name": "Prepare To Transcription",
+        "func": "if(msg.transcription!=null){\n    console.log(msg.transcription);\n}\nmsg.payload = msg.transcription;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 271.76202392578125,
+        "y": 366.8730163574219,
+        "wires": [
+            [
+                "fa7fa1c3.1d9d5"
+            ]
+        ]
+    },
+    {
+        "id": "e379eb32.b6fc1",
+        "type": "link in",
+        "z": "ba8df3a2.f24d28",
+        "name": "Voice Input Flow",
+        "links": [
+            "fee85b54.5ff138"
+        ],
+        "x": 127.34933662414551,
+        "y": 185.95236206054688,
+        "wires": [
+            [
+                "d334936d.01c9f8"
+            ]
+        ]
+    },
+    {
+        "id": "e19852fa.307da",
+        "type": "function",
+        "z": "ba8df3a2.f24d28",
+        "name": "",
+        "func": "\nmsg.path = msg.payload.result.file_path;\nmsg.payload = \"https://api.telegram.org/file/bot338207846:AAHfasUX_8D4LL0IfXgX3_wFEgJZqkQcDpM/voice/\"+msg.path.substring(6, msg.path.length);\nreturn msg;",
+        "outputs": "1",
+        "noerr": 0,
+        "x": 652.1271095275879,
+        "y": 187.39682006835938,
+        "wires": [
+            [
+                "a039a305.0604e"
+            ]
+        ]
+    },
+    {
+        "id": "67ce5778.03d81",
+        "type": "json",
+        "z": "ba8df3a2.f24d28",
+        "name": "",
+        "x": 508.1271286010742,
+        "y": 184.28570938110352,
+        "wires": [
+            [
+                "e19852fa.307da"
+            ]
+        ]
+    },
+    {
+        "id": "a87123f.b09f3e",
+        "type": "link out",
+        "z": "ba8df3a2.f24d28",
+        "name": "Speech to Text OutPut",
+        "links": [
+            "62da6e8c.75ca3"
+        ],
+        "x": 994.3493537902832,
+        "y": 184.39682388305664,
+        "wires": []
+    },
+    {
+        "id": "62da6e8c.75ca3",
+        "type": "link in",
+        "z": "ba8df3a2.f24d28",
+        "name": "Prepare Transcription IN",
+        "links": [
+            "a87123f.b09f3e"
+        ],
+        "x": 131.6509141921997,
+        "y": 367.5396976470947,
+        "wires": [
+            [
+                "e8e06327.a64c18"
+            ]
+        ]
+    },
+    {
+        "id": "fa7fa1c3.1d9d5",
+        "type": "watson-conversation-v1",
+        "z": "ba8df3a2.f24d28",
+        "name": "",
+        "workspaceid": "00462ab5-a3b0-4455-adfc-eacd8d3b87f8",
+        "multiuser": false,
+        "context": true,
+        "x": 510.8731231689453,
+        "y": 362.8730163574219,
+        "wires": [
+            [
+                "2691048.1b2e7fc",
+                "db2d96bd.0a8df"
+            ]
+        ]
+    },
+    {
+        "id": "2691048.1b2e7fc",
+        "type": "function",
+        "z": "ba8df3a2.f24d28",
+        "name": "Prepare To Reply",
+        "func": "if(msg.payload.output.text[0]!=null){\n    console.log(msg.payload.output.text[0]);\n}\nmsg.payload = msg.payload.output.text[0];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 758.8731822967529,
+        "y": 362.476224899292,
+        "wires": [
+            [
+                "d3a199c2.291768"
+            ]
+        ]
+    },
+    {
+        "id": "d3a199c2.291768",
+        "type": "link out",
+        "z": "ba8df3a2.f24d28",
+        "name": "PrepareToReplyOut",
+        "links": [
+            "1a180b91.25cc24",
+            "39c917bd.cca6c"
+        ],
+        "x": 978.7144298553467,
+        "y": 362.7936382293701,
+        "wires": []
+    },
+    {
+        "id": "d334936d.01c9f8",
+        "type": "function",
+        "z": "ba8df3a2.f24d28",
+        "name": "",
+        "func": "msg.url = msg.originalMessage.voice.file_id;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 211.34933471679688,
+        "y": 185.06346321105957,
+        "wires": [
+            [
+                "c21f877.7e20bf8"
+            ]
+        ]
+    },
+    {
+        "id": "db2d96bd.0a8df",
+        "type": "debug",
+        "z": "ba8df3a2.f24d28",
+        "name": "",
+        "active": true,
+        "console": "true",
+        "complete": "true",
+        "x": 679.4207897186279,
+        "y": 471.01586723327637,
+        "wires": []
+    },
+    {
+        "id": "c31270e.637ba9",
+        "type": "debug",
+        "z": "dcc88864.42639",
+        "name": "",
+        "active": true,
+        "console": "true",
+        "complete": "true",
+        "x": 881.2857666015625,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "1b02c220.4fbc6e",
+        "type": "watson-text-to-speech",
+        "z": "dcc88864.42639",
+        "name": "",
+        "lang": "pt-BR",
+        "langhidden": "pt-BR",
+        "langcustom": "NoCustomisationSetting",
+        "langcustomhidden": "",
+        "voice": "pt-BR_IsabelaVoice",
+        "voicehidden": "",
+        "format": "audio/ogg; codecs=opus",
+        "password": "",
+        "x": 236.2857666015625,
+        "y": 164,
+        "wires": [
+            [
+                "7876d6a7.331868"
+            ]
+        ]
+    },
+    {
+        "id": "86c56d47.ed732",
+        "type": "telegram sender",
+        "z": "dcc88864.42639",
+        "name": "",
+        "bot": "13d2ea2.186e696",
+        "x": 681.6191024780273,
+        "y": 161.77776908874512,
+        "wires": [
+            [
+                "c31270e.637ba9"
+            ]
+        ]
+    },
+    {
+        "id": "39c917bd.cca6c",
+        "type": "link in",
+        "z": "dcc88864.42639",
+        "name": "Text to Speech In",
+        "links": [
+            "d3a199c2.291768"
+        ],
+        "x": 109.2857666015625,
+        "y": 166,
+        "wires": [
+            [
+                "1b02c220.4fbc6e"
+            ]
+        ]
+    },
+    {
+        "id": "7876d6a7.331868",
+        "type": "function",
+        "z": "dcc88864.42639",
+        "name": "Prepare To Sender",
+        "func": "msg.additional_context.telegram.msg_payload_original.content = msg.speech;\nmsg.payload = msg.additional_context.telegram.msg_payload_original;\nreturn msg;",
+        "outputs": "1",
+        "noerr": 0,
+        "x": 456.39686584472656,
+        "y": 164.333345413208,
+        "wires": [
+            [
+                "86c56d47.ed732"
+            ]
+        ]
+    }
+]
