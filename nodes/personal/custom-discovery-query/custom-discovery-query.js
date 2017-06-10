@@ -23,14 +23,19 @@ module.exports = function(RED) {
     "use strict";
     // require any external libraries we may need....
     //var foo = require("foo-library");
+    var DiscoveryV1 = require('watson-developer-cloud/discovery/v1');
     var htmlToText = require('html-to-text');
+    var emojiStrip = require('emoji-strip');
+    const emojiRegex = require('emoji-regex');
+    var emoji_replace = require('emoji-replace');
     // The main node definition - most things happen in here
-    function Htmltotext(n) {
+    function CustomDiscoveryQuery(n) {
+        // Create a RED node
         // Create a RED node
         RED.nodes.createNode(this,n);
 
         // Store local copies of the node configuration (as defined in the .html)
-        this.topic = n.topic;
+        this.query = n.query;
 
         // copy "this" object in case we need it in context of callbacks of other functions.
         var node = this;
@@ -40,26 +45,63 @@ module.exports = function(RED) {
         // this message once at startup...
         // Look at other real nodes for some better ideas of what to do....
         var msg = {};
-        msg.topic = this.topic;
-        msg.payload = "Hello world !"
+        msg.query = this.query;
+        msg.payload = ""
 
         // send out the message to the rest of the workspace.
         // ... this message will get sent at startup so you may not see it in a debug node.
         this.send(msg);
 
+        var res = {};
         // respond to inputs....
         this.on('input', function (msg) {
             //node.warn("I saw a payload: "+msg.payload);
             // in this example just send it straight on... should process it here really
             //node.send(msg);
             //var originalPayload = msg.payload;
-            var msgToTranslateToText = msg.originalMessage.text;
-            var text = htmlToText.fromString(msgToTranslateToText, {
-                wordwrap: 130
+            var discovery = new DiscoveryV1({
+                username: '0d500449-16d7-438f-9623-4cfde1dff85c',
+                password: 'wlpW48uhT4bo',
+                version_date: '2016-12-01'
             });
-            msg.payload.content = text;
-            //msg.payload = originalPayload;
-            node.send(msg);
+            discovery.query({
+                environment_id: process.env.DISCOVERY_ENVIRONMENT || 'd9aef3da-7726-4e83-846f-90bc3af069e9',
+                collection_id: process.env.DISCOVERY_COLLECTION || '99050df1-aeb8-4de4-86ac-503a8c3dde3e',
+                query: msg.query,
+                passages: true,
+                count: 5
+            }, function (err, response) {
+                var res = JSON.stringify(response);
+                 var text = htmlToText.fromString(res, {
+                     wordwrap: 1300
+                });
+                var jsonText = JSON.stringify(text);
+                console
+                if(jsonText.includes('\\n')){
+                    jsonText = jsonText.replace(/\n/g, ' ');
+                    jsonText = jsonText.replace(/\\n/g, ' ')
+                }
+                if(jsonText.includes('\\')){
+                    jsonText = jsonText.replace('\\', ' ');
+                    jsonText = jsonText.replace(/\\/g, ' ')
+                }
+                if(jsonText.includes('...')){
+                    jsonText = jsonText.replace('...', ' ');
+                }
+                if(jsonText.includes('>') || jsonText.includes(' > ')){
+                    jsonText = jsonText.replace('>', ' em seguida ');
+                    jsonText = jsonText.replace(' > ', ' em seguida ');
+                }
+                if(jsonText.includes('no title')){
+                    jsonText = jsonText.substring(jsonText.indexOf('no title')+8,jsonText.length);
+                }
+
+
+
+                var newtext = emojiStrip(jsonText);
+                msg.queryResult = newtext;
+                node.send(msg);
+            });
         });
 
         this.on("close", function() {
@@ -71,6 +113,6 @@ module.exports = function(RED) {
 
     // Register the node by name. This must be called before overriding any of the
     // Node functions.
-    RED.nodes.registerType("Htmltotext",Htmltotext);
+    RED.nodes.registerType("CustomDiscoveryQuery",CustomDiscoveryQuery);
 
 }

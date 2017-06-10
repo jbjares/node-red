@@ -64,11 +64,12 @@ module.exports = function(RED) {
              //   type : "message",
               //  content : msg.payload.output.text[0]};
 
+debugger;
             console.log("msg output init : "+msg.payload.output.text[0]);
             var msgToTranslateToText = msg.payload.output.text[0];
             console.log("msgToTranslateToText: "+msgToTranslateToText);
             var text = htmlToText.fromString(msgToTranslateToText, {
-                wordwrap: 130
+                wordwrap: 1300
             });
             console.log("msgToTranslateToText after htmml converter: "+msgToTranslateToText);
             var newtext = emojiStrip(text);
