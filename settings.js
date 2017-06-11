@@ -205,5 +205,14 @@ module.exports = {
             // Whether or not to include audit events in the log output
             audit: false
         }
+    },
+    myCustomLogger: {
+        level: 'debug',
+        metrics: true,
+        handler: function(settings) {
+            return function(msg) {
+                console.log(msg.timestamp, msg.event);
+            }
+        }
     }
 }
