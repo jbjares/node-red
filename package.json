@@ -61,6 +61,8 @@
         "mqtt": "2.2.1",
         "mustache": "2.3.0",
         "nano": "6.2.x",
+        "node-red-contrib-play-audio": "^2.2.2",
+        "node-red-contrib-speakerpi": "0.0.38",
         "node-red-contrib-telegrambot": "^2.4.1",
         "node-red-node-email": "0.1.*",
         "node-red-node-feedparser": "0.1.*",

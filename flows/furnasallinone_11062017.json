@@ -156,7 +156,8 @@
     "y": 194.77777099609375,
     "wires": [
       [
-        "b6fba09b.fa194"
+        "b6fba09b.fa194",
+        "d8768850.3a21f8"
       ]
     ]
   },
@@ -429,7 +430,9 @@
     "x": 232.024169921875,
     "y": 405.7857971191406,
     "wires": [
-      [],
+      [
+        "75be3ec4.b86fb"
+      ],
       [
         "42635679.bdfde"
       ]
@@ -471,8 +474,8 @@
     "active": true,
     "console": "true",
     "complete": "true",
-    "x": 747.7382507324219,
-    "y": 502.5715637207031,
+    "x": 479.73828125,
+    "y": 302.571533203125,
     "wires": []
   },
   {
@@ -483,8 +486,8 @@
     "active": true,
     "console": "true",
     "complete": "true",
-    "x": 466.3096008300781,
-    "y": 338.2857666015625,
+    "x": 896.3096008300781,
+    "y": 327.2857666015625,
     "wires": []
   },
   {
@@ -508,14 +511,15 @@
     "type": "function",
     "z": "6a198863.4282d8",
     "name": "Prepare msg To be back to Conversation",
-    "func": "var params = {};\nparams[\"context_nodered\"] = {\n    \"gerenciar_senha_notes\":msg.queryResult\n};\n\nmsg[\"params\"] = params;\nmsg.payload = \"200\";\nmsg.user = msg.originalMessage.chat.username;\nreturn msg;",
+    "func": "var params = {};\nparams[\"context_nodered\"] = {\n    \"gerenciar_senha_notes\":msg.queryResult\n};\n\n\nmsg.payload = msg.queryResult;\n\nmsg[\"params\"] = params;\nmsg.user = msg.originalMessage.chat.username;\nreturn msg;",
     "outputs": 1,
     "noerr": 0,
     "x": 590.5953063964844,
     "y": 414.3572082519531,
     "wires": [
       [
-        "f1442552.4fd9a8"
+        "f1442552.4fd9a8",
+        "f90ea44e.be6c6"
       ]
     ]
   },
@@ -904,10 +908,12 @@
     "z": "a173a8a0.296f6",
     "name": "",
     "bot": "90367877.8b4cc8",
-    "x": 1144.2857666015625,
-    "y": 168.5716552734375,
+    "x": 1023.2857666015625,
+    "y": 191.5716552734375,
     "wires": [
-      []
+      [
+        "94db4609.a1ce3"
+      ]
     ]
   },
   {
@@ -916,8 +922,8 @@
     "z": "a173a8a0.296f6",
     "name": "",
     "topic": "",
-    "x": 255.71401977539062,
-    "y": 175.71441650390625,
+    "x": 333.7140197753906,
+    "y": 193.71441650390625,
     "wires": [
       [
         "ec089eb4.8b161"

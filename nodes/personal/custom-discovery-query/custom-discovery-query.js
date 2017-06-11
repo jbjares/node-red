@@ -66,17 +66,23 @@ module.exports = function(RED) {
             });
             discovery.query({
                 environment_id: process.env.DISCOVERY_ENVIRONMENT || 'd9aef3da-7726-4e83-846f-90bc3af069e9',
-                collection_id: process.env.DISCOVERY_COLLECTION || '99050df1-aeb8-4de4-86ac-503a8c3dde3e',
+                collection_id: process.env.DISCOVERY_COLLECTION || '328b6f42-dd5a-475b-aa5d-de89dba9c5a9',
                 query: msg.query,
                 passages: true,
-                count: 5
+                count: 1
             }, function (err, response) {
-                var res = JSON.stringify(response);
-                 var text = htmlToText.fromString(res, {
-                     wordwrap: 1300
-                });
+                var reply = {};
+                if(response[0]==null){
+                    reply = response;
+                }
+                if(response[0]!=null){
+                    reply = response[0].highlight[0].text;
+                }
+
+
+                var text = htmlToText.fromString(JSON.stringify(reply), {wordwrap:1300});
                 var jsonText = JSON.stringify(text);
-                console
+
                 if(jsonText.includes('\\n')){
                     jsonText = jsonText.replace(/\n/g, ' ');
                     jsonText = jsonText.replace(/\\n/g, ' ')
@@ -92,13 +98,12 @@ module.exports = function(RED) {
                     jsonText = jsonText.replace('>', ' em seguida ');
                     jsonText = jsonText.replace(' > ', ' em seguida ');
                 }
-                if(jsonText.includes('no title')){
-                    jsonText = jsonText.substring(jsonText.indexOf('no title')+8,jsonText.length);
-                }
-
-
-
                 var newtext = emojiStrip(jsonText);
+
+                var asteriskRegerx = "/[*]/gixsm";
+                if(newtext.includes('*')){
+                    newtext = newtext.replace(asteriskRegerx, " ");
+                }
                 msg.queryResult = newtext;
                 node.send(msg);
             });
