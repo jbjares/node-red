@@ -1,0 +1,10 @@
+applications:
+- path: .
+  memory: 512M
+  instances: 1
+  domain: mybluemix.net
+  name: NodeRed-Furnas
+  host: NodeRed-Furnas
+  disk_quota: 1024M
+  services:
+  - NodeRed-Furnas-cloudantNoSQLDB
